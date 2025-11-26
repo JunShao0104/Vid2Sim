@@ -15,23 +15,25 @@ Vid2Sim is a novel framework that converts monocular videos into photorealistic 
 
 ```bash
 # Clone the repository
-git clone https://github.com/Vid2Sim/Vid2Sim.git --recursive
+git clone git@github.com:JunShao0104/Vid2Sim.git --recursive
 cd Vid2Sim
 
 # Create a new environment
-conda create -n vid2sim python=3.10
+conda create -n vid2sim python=3.10.12
 conda activate vid2sim
 
 # Install dependencies
+# Requirements: Cuda 12.1
 pip install -e .
 
 # Install reconstruction dependencies
-pip install -e submodules/vid2sim-rasterizer
+pip install -e submodules/vid2sim-rasterizer --no-build-isolation
 pip install -e submodules/vid2sim-deva-segmentation
-pip install -e submodules/simple-knn
+pip install -e submodules/simple-knn --no-build-isolation
 
 # Install RL dependencies
 pip install -r src/vid2sim_rl/requirements.txt
+pip install -e submodules/ml-agents/ml-agents-envs
 pip install -e submodules/ml-agents/ml-agents
 [Optional] pip install -e submodules/r3m
 ```

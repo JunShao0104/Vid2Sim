@@ -11,4 +11,5 @@ pandas==2.2.2
 Pillow==10.4.0
 setuptools==70.1.1
 stable_baselines3==2.3.2
-mlagents_envs==1.1.0
+mlagents_envs==0.28.0
+
