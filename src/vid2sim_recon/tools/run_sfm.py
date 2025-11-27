@@ -50,11 +50,11 @@ if not args.skip_matching:
     #         feat_extract_cmd += f" --ImageReader.mask_path {mask_folder}"
     
     # Only add mask path if explicitly provided AND exists
-    if args.mask_path and os.path.exists(args.mask_path):
-        print(f"Using mask path: {args.mask_path}")
-        feat_extract_cmd += f" --ImageReader.mask_path {args.mask_path}"
-    else:
-        print("No mask path provided or mask folder does not exist — ignoring masks.")
+    # if args.mask_path and os.path.exists(args.mask_path):
+    #     print(f"Using mask path: {args.mask_path}")
+    #     feat_extract_cmd += f" --ImageReader.mask_path {args.mask_path}"
+    # else:
+    #     print("No mask path provided or mask folder does not exist — ignoring masks.")
 
     print(f"Executing: {feat_extract_cmd}")
     exit_code = os.system(feat_extract_cmd)
@@ -104,7 +104,7 @@ img_undist_cmd = (
     f'{colmap_command} image_undistorter '
     f'--image_path {args.source_path}/images '
     f'--input_path {input_sparse_path} '
-    f'--output_path {args.source_path} '
+    f'--output_path {args.source_path}/undistorted '
     f'--output_type COLMAP'
 )
 exit_code = os.system(img_undist_cmd)
@@ -115,12 +115,29 @@ if exit_code != 0:
 # ---------------------------
 # Move sparse files
 # ---------------------------
-sparse_path = os.path.join(args.source_path, "sparse")
-os.makedirs(os.path.join(sparse_path, "0"), exist_ok=True)
-for file in sorted(os.listdir(sparse_path)):
-    if file == "0":
-        continue
-    shutil.move(os.path.join(sparse_path, file), os.path.join(sparse_path, "0", file))
+# sparse_path = os.path.join(args.source_path, "sparse")
+# os.makedirs(os.path.join(sparse_path, "0"), exist_ok=True)
+# for file in sorted(os.listdir(sparse_path)):
+#     if file == "0":
+#         continue
+#     shutil.move(os.path.join(sparse_path, file), os.path.join(sparse_path, "0", file))
+
+# ---------------------------
+# Move sparse files from distorted/sparse to sparse/0
+# ---------------------------
+src_sparse_path = os.path.join(args.source_path, "undistorted", "sparse")
+dst_sparse_path = os.path.join(args.source_path, "sparse", "0")
+
+os.makedirs(dst_sparse_path, exist_ok=True)
+
+# The mapper usually creates a folder named "0"
+# model_folder = sorted(os.listdir(src_sparse_path))[0]
+# model_path = os.path.join(src_sparse_path, model_folder)
+model_path = src_sparse_path
+
+# Move each file into sparse/0
+for file in os.listdir(model_path):
+    shutil.copy2(os.path.join(model_path, file), os.path.join(dst_sparse_path, file))
 
 # ---------------------------
 # Optional resizing
